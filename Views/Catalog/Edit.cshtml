@@ -1,0 +1,94 @@
+﻿@using pet_food.Models.ViewModels
+@model FeedEditViewModel
+@{  
+    ViewData["Title"] = "Редагування " + Model.Feed.Name;
+    var type_name = "";
+    var pet_name = "";
+    foreach (var feedtype in Model.All_Types_Pets.AllFeedTypes)    
+        if (feedtype.Id == Model.Feed.FeedTypeId)        
+            type_name = feedtype.Name;
+            
+    foreach (var pet in Model.All_Types_Pets.AllPets)    
+        if (pet.Id == Model.Feed.PetId)        
+            pet_name = pet.Name;           
+}
+
+<div>
+    <h2>Форма редагування корма</h2>
+    <p>Відредагуйте поля:</p>
+    <div  style="float:right">    
+        <h4>Поточна картинка</h4>
+        <img src="~/images/feeds/@Model.Feed.Image" width="350px" height="480px" />
+    </div>
+
+    <form asp-action="Edit" asp-route-id="@Model.Feed.Id" method="post" enctype="multipart/form-data">
+        <table>
+            <tr>
+                <td>Назва:</td>
+                <td><input type="text" minlength="1" value="@Model.Feed.Name" name="Name" required /></td>
+            </tr>
+            <tr>
+                <td>Фірма:</td>
+                <td><input type="text" minlength="1" value="@Model.Feed.Brand" name="Brand" required /></td>
+            </tr>
+            <tr>
+                <td>Вага (в г):</td>
+                <td><input type="number" min="1" max="999999" value="@Model.Feed.Weight" name="Weight" required /></td>
+            </tr>
+            <tr>
+                <td>Ціна:</td>
+                <td><input type="number" min="0" max="999999"  value="@Model.Feed.Price" name="Price" required /></td>
+            </tr>
+            <tr>
+                <td>Опис:</td>
+                <td><input type="text" minlength="1" value="@Model.Feed.Description" name="Description" required /></td>
+            </tr>
+            <tr>               
+                <td>Вид корму:</td>
+                <td>
+                    <select name="FeedTypeId" required>
+                        <option value="@Model.Feed.FeedTypeId">@type_name</option>
+                        @foreach (var feedtype in Model.All_Types_Pets.AllFeedTypes)
+                        {
+                            if (feedtype.Id != Model.Feed.FeedTypeId)
+                            {
+                                <option value="@feedtype.Id">@feedtype.Name</option>
+                            }
+                        }
+                    </select>
+                </td>
+            </tr>
+            <tr>              
+                <td>Для:</td>
+                <td>
+                    <select name="PetId" required>
+                        <option value="@Model.Feed.PetId">@pet_name</option>
+                        @foreach (var pet in Model.All_Types_Pets.AllPets)
+                        {
+                            if (pet.Id != Model.Feed.PetId)
+                            {
+                                <option value="@pet.Id">@pet.Name</option>
+                            }
+                        }
+                    </select>
+                </td>
+            </tr>
+            <tr>
+            нова картинка:
+                <input type="file" name="image" />
+            </tr>
+            <tr>
+                <td><input type="submit" value="Відредагувати" /></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+
+<a asp-action="Delete" asp-route-id="@Model.Feed.Id">
+    <input type="submit" class="btn btn-sm btn-danger" value="Видалити" />
+    </a>
+    <br />
+<a asp-action="FeedPage" asp-route-id="@Model.Feed.Id">
+    <input type="submit" value="Повернутися" />
+</a>

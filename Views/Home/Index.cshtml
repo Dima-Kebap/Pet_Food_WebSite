@@ -1,0 +1,80 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+
+
+@{
+    ViewData["Title"] = "🐈Pet🦜Feed🐕";
+}
+<style>
+    body {
+        background-image: url('images/background.jpg');
+        background-size: 100%;
+    }
+    .my_cart{
+        background-color:tomato;
+        border:solid;
+        border-width:3px;
+        border-color: coral;
+        position:absolute;
+        top:40%;
+        left:70%;
+        width:300px;
+        height:150px;
+        border-radius:10%;
+        text-align:center;
+    }
+    .catalog {
+        background-color: palevioletred;
+        border: solid;
+        border-width: 3px;
+        border-color: cornflowerblue;
+        position: absolute;
+        top: 40%;
+        right: 70%;
+        width: 300px;
+        height: 150px;
+        border-radius: 10%;
+        text-align: center;
+    }
+    .welcome{
+        position: absolute;
+        left:32%;
+        top: 10%;
+        width: 500px;
+        height: 200px;
+        text-align: center;
+    }
+</style>
+
+
+
+<div class="welcome" >
+	<h2>
+        <b><big>Вітаємо</big></b><br />
+        у нашому інтернет-зоомагазині<br />
+        для домашніх улюбленців<br />
+        <big>🐈Pet🦜Feed🐕</big>
+    </h2>
+</div>
+
+
+@if(SignInManager.IsSignedIn(User)){
+    <form asp-controller="Catalog" asp-action="Catalog">
+	    <button class="catalog">
+		    <h3>Каталог</h3>
+	    </button>
+    </form>
+
+    <form asp-controller="Cart" asp-action="Index">
+	    <button class="my_cart">
+		    <h3>🛒Мій кошик🛒</h3>
+	    </button>
+    </form>
+}
+else{
+    <form asp-controller="Catalog" asp-action="Catalog">
+        <button class="catalog" style="right:40%">
+            <h3>Каталог</h3>
+        </button>
+    </form>
+}

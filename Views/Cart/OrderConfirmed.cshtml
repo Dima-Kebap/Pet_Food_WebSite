@@ -1,0 +1,19 @@
+﻿@model List<string>
+@{
+    ViewData["Title"] = "Замовлення підтверджено";
+}
+
+<style>
+    body {
+        background-color:lightseagreen;
+        background-size: 100%;
+    }
+</style>
+
+<div style="text-align: center;">
+	<h1><b>Чудово!</b></h1><br><br>
+	Ми зв'яжемось з вами за номером телефону: <h3>@Model[1]</h3><br>
+	Замовлення буде доставлено за адресою: <h3>@Model[0]</h3><br>
+</div>
+
+

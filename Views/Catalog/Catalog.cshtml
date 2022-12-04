@@ -1,0 +1,109 @@
+﻿@using pet_food.Models.ViewModels
+@model CatalogViewModel
+
+<style>
+    #filter{float:left;
+        border-width: 3px;
+        border-color: cornflowerblue;
+        border-style: solid;
+        width: 25%;
+        border-radius: 5%
+    }
+    #list {float: right;
+            width: 70%;
+    }
+
+    body {
+        background-color: palevioletred;
+        background-size: 100%;
+    }
+</style>
+@{
+    ViewData["Title"] = "Каталог";
+    List<string> Brands = new List<string>();
+    double minPrice = Model.AllFeeds[0].Price;
+    double maxPrice = minPrice;
+    double maxWeight = Model.AllFeeds[0].Weight;
+    foreach (var feed in Model.AllFeeds)
+    {
+        if (!Brands.Contains(feed.Brand))
+            Brands.Add(feed.Brand);
+        
+        if(minPrice > feed.Price)
+            minPrice = feed.Price;
+        
+        if (maxPrice < feed.Price)
+            maxPrice = feed.Price;
+        
+        if (maxWeight < feed.Weight)
+            maxWeight = feed.Weight;
+    }
+}
+
+
+<div class="text-center"><h2>Каталог</h2></div>
+@if (User.IsInRole("admin"))
+{ 
+    <a asp-action="Create"><input type="submit" value="Додати корм" /></a>
+    <br />
+}
+
+<div id="filter">
+<form asp-action="Filter">
+    <ul style="list-style-type:none">
+        <li>Максимальна вага<input type="number" min="0" max="@maxWeight" name="Weight" value="@maxWeight"/></li><br />
+        <li>Мінімальна ціна<input type="number" min="@minPrice" max="@maxPrice" name="minPrice" value="@minPrice"/></li>
+        <li>Максимальна ціна<input type="number" min="@minPrice" max="@maxPrice" name="maxPrice" value="@maxPrice"/></li><br />
+        <li style="border:dotted; border-color:saddlebrown">Вид корму: <br />
+            <input type="checkbox" name="FeedTypesId" value="1" />Сухий<br />
+            <input type="checkbox" name="FeedTypesId" value="2" />Консерва<br />
+            <input type="checkbox" name="FeedTypesId" value="3" />Ласощі<br />
+        </li><br />
+        <li style="border:dotted; border-color:blueviolet">Для <br />
+            <input type="checkbox" name="PetsId" value="1" />Котів<br />
+            <input type="checkbox" name="PetsId" value="2" />Собак<br />
+            <input type="checkbox" name="PetsId" value="3" />Птахів<br />
+        </li><br />
+
+        <li style="border:dotted; border-color:chartreuse">Бренд: <br />
+        <select name="Brands" multiple>
+            @foreach (var brand in Brands)
+            {
+                <option value="@brand">@brand</option>
+            }
+        </select>
+        </li><br />    
+
+         <li><button type="submit" class="btn btn-sm btn-danger">
+            Відфільтрувати
+        </button></li><br />
+        </ul>
+</form>
+</div>
+
+
+<div id="list">
+    <table class="table" border="1" style="border-color:darkred; border-width:2px">
+        @foreach (var feed in Model.FilteredFeeds)
+        {
+            <tr>
+                <td style="width:20%;">
+                    <a asp-action="FeedPage" asp-route-id="@feed.feed.Id">
+                        <img src="~/images/feeds/@feed.feed.Image" width="170px" height="240px" />
+                    </a>
+                </td>
+                <td style="width:20%" align="center">
+                    <a style="color:black" asp-action="FeedPage" asp-route-id="@feed.feed.Id">
+                        <big>@feed.feed.Name</big><br /><br />
+                    </a> 
+                    <b>@feed.FeedType</b> для <b>@feed.Pet</b> <br />
+                    Від "<b>@feed.feed.Brand</b>"<br />
+                    <b>@feed.feed.Weight</b> гр<br />
+                    <i><b>@feed.feed.Price</b> ₴</i><br />
+                    <small style="color:darkslategray; background-color:gray"><i>код: @feed.feed.Id</i></small>
+                </td>
+                <td style="width:60%;">@feed.feed.Description</td>
+            </tr>
+        }
+    </table>
+</div>

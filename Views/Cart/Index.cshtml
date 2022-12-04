@@ -1,0 +1,85 @@
+﻿@using pet_food.Models.ViewModels
+@model IEnumerable<CartViewModel>
+@{
+    ViewData["Title"] = "Кошик";
+}
+<style>
+    body {
+        background-color:tomato;
+        background-size: 100%;
+    }
+    .centr_bald{
+        text-align:center;
+        font-weight:500;
+    }
+</style>
+
+
+<h2 class="text-center">Мій кошик</h2>
+
+@if (Model.Where(s => s.Status == "У кошику").Any())
+{
+    <form class="text-center" asp-action="OrderConfirmation" method="post">
+            <button type="submit" style="background-color:lawngreen; width:300px; height:100px" >
+               <b><big>Перейти до оформлення замовлення</big></b>
+            </button>
+    </form>
+}
+
+<table class="table" align="center" style="width:80%">
+    <tr>
+        <th scope="col" style="width:20%" align="center"></th>
+        <th class="centr_bald" scope="col" style="width:20%" align="center">Опис</th>
+        <th class="centr_bald" scope="col" style="width:10%" align="center">Ціна</th>
+        <th class="centr_bald" scope="col" style="width:20%" align="center">Загальна ціна</th>
+        <th class="centr_bald" scope="col" style="width:15%" align="center">Кількість</th>
+        <th class="centr_bald" scope="col" style="width:15%" align="center">Статус</th>
+    </tr>
+    @foreach (var value in Model)
+    {    
+    <tr>
+        <td align="center">
+            <a asp-controller="Catalog" asp-action="FeedPage" asp-route-id="@value.Feed.feed.Id">
+                <img src="~/images/feeds/@value.Feed.feed.Image" width="120px" height="160px" style="border-radius:4%" />
+            </a>
+        </td>
+        <td class="centr_bald"  align="center">
+            <a style="color:black" asp-controller="Catalog" asp-action="FeedPage" asp-route-id="@value.Feed.feed.Id">
+                <big>@value.Feed.feed.Name</big><br /><br />
+            </a>
+            <b>@value.Feed.FeedType</b> для <b>@value.Feed.Pet</b> <br />
+            Від "<b>@value.Feed.feed.Brand</b>"<br />
+            <b>@value.Feed.feed.Weight</b> гр<br />
+            <small style="color:darkslategray; background-color:gray"><i>код: @value.Feed.feed.Id</i></small>
+        </td>
+        <td class="centr_bald" valign="middle">@value.Feed.feed.Price ₴</td>
+        <td class="centr_bald" valign="middle">@value.Price ₴</td>      
+        @if (value.Status == "У кошику")
+        {
+        <td class="centr_bald" valign="middle">
+        <form asp-action="CartRemove">
+            <input type="number" min="1" max="999999" value="@value.Count" name="count" required /><br>
+            <input type="number" value="@value.Id" name="cartId" hidden />
+            <button type="submit" class="btn btn-sm btn-danger">
+                Зберегти
+            </button>
+        </form>
+        <br />
+        <form asp-action="CartRemove">
+            <input type="number" value="0" name="count" hidden /><br>
+            <input type="number" value="@value.Id" name="cartId" hidden />
+            <button type="submit" class="btn btn-sm btn-danger">
+                Видалити з кошика
+            </button>      
+        </form>
+        </td>
+        <td class="centr_bald" style="color:ghostwhite;" valign="middle">@value.Status</td>
+        }    
+        else
+        {
+            <td class="centr_bald" valign="middle">@value.Count</td>
+            <td class="centr_bald" valign="middle" style="color:yellow">@value.Status</td>
+        }
+    </tr>           
+    }
+</table>

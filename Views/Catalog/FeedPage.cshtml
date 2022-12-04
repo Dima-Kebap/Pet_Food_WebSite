@@ -1,0 +1,70 @@
+﻿@using pet_food.Models.ViewModels
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@model pet_food.Models.ViewModels.FeedPageViewModel
+@{
+    ViewData["Title"] = Model.feed.Name;
+  }
+
+
+<style>
+    img {
+        border: solid;
+        border-radius: 5%
+    }
+    .button{
+        width: 150px;
+        height:70px;
+    }
+
+    body {
+        background-color:navajowhite;
+        background-size: 100%;
+    }
+</style>
+
+
+
+<a asp-action="Catalog"><input type="submit" class="button" style="background-color: palevioletred; border-radius:5%" value="В каталог" /></a>
+
+
+@if (User.IsInRole("admin"))
+{
+    <a asp-controller="Catalog" asp-action="Edit" asp-route-id="@Model.feed.Id">
+        <input type="submit" class="button" value="Редагувати" />
+    </a>
+}
+<table align="center" width="100%"> 
+    <tr>
+		<td style="border-color:black">
+            <img src="~/images/feeds/@Model.feed.Image" width="350px" height="480px"/>
+        </td>
+       
+        <td style="width:60%; border-color:black; border:solid;border-radius: 3%" align="center">
+
+            <big><b><big>Назва: @Model.feed.Name</big><br /><br />
+            Ціна: @Model.feed.Price ₴<br /><br />
+		    Вага: @Model.feed.Weight гр<br /><br />
+            Бренд: @Model.feed.Brand<br /><br />
+		    Вид: @Model.FeedType<br /><br />
+            Для: @Model.Pet</b></big><br /><br />
+            <small>Код товару: @Model.feed.Id</small><br /><br />
+			<div style="float:left"><b>Опис:</b> @Model.feed.Description</div>
+        </td>
+        
+    @if (SignInManager.IsSignedIn(User)){
+        <td style="width:20%; border-color:black; border:solid; border-radius: 3%" align="center">
+            <form asp-controller="Cart" asp-action="CartAdd" method="post">
+                <input type="number" min="1" value="1" style="width:30%" name="count" required /><br />
+                <input type="number" value="@Model.feed.Id" name="feedId" hidden />
+                <input type="submit" class="button" style="background-color:lawngreen;" value="Додати у 🛒">   
+            </form>
+        </td>
+    }
+    else
+    {
+        <td style="width:20%;"></td>
+    }
+    </tr>
+</table>
+

@@ -1,0 +1,77 @@
+﻿@using pet_food.Models.ViewModels
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> userManager
+@model IEnumerable<CartViewModel>
+<style>
+    body {
+        background-color: lightgray;
+        background-size: 100%;
+    }
+    #confirm{
+        float:right;
+        border:solid;
+        border-color:yellow;
+        border-radius:3%;
+        text-align: center;
+
+    }
+
+    .centr_bald {
+        text-align: center;
+        font-weight: 500;
+    }
+</style>
+
+@{
+    ViewData["Title"] = "Формування замовлення";
+    var user = await userManager.GetUserAsync(User);
+    var phone = await userManager.GetPhoneNumberAsync(user);
+    if(phone==null){
+        phone = "+380";
+    }
+    double fullprice = 0;
+    foreach(var cart in Model)
+        fullprice += cart.Price;    
+}
+
+<h2 class="text-center"><b>Формування замовлення</b></h2><br />
+
+<div id="confirm">
+<form asp-action="OrderConfirmed" method="post" >
+        Введіть адресу доставки: 
+        <input type="text" name="adress" style="width:60%" required /><br />
+		Телефон для зв'язку <small>(формат +380123456789)</small>:
+		<input type="tel" maxlength="13" name="phone" pattern="\+380[0-9]{9}" value="@phone" style="width:25%" required />
+        <br />
+        <big>Загалом <b><big>@fullprice</big></b> грн</big><br /><br />
+        <button type="submit" style="background-color:forestgreen; width:200px;height:75px; color:ghostwhite; border-radius:15%">
+			<big><b>Підтвердити</b></big>
+        </button><br /><br /><br />
+</form>
+<form asp-action="Index" method="post">
+    <button type="submit" class="btn btn-sm btn-danger" >
+        Відмінити
+        </button><br /><br />
+</form>
+</div>
+
+
+<table class="table" border="1" style="border-color:forestgreen; width:45%; float:left;">
+<tr>
+    <th style="width:30%"></th>
+    <th class="centr_bald" scope="col" style="width:25%">Назва</th>
+    <th class="centr_bald" scope="col" style="width:15%">Ціна ₴</th>
+    <th class="centr_bald" scope="col" style="width:20%">Всього ₴</th>
+    <th class="centr_bald" scope="col" style="width:10%">Кількість</th>
+</tr>
+   @foreach (var value in Model)
+    {
+    <tr>
+            <td><img src="~/images/feeds/@value.Feed.feed.Image" width="150px" height="200px" style="border-radius:3%" /></td>
+            <td class="centr_bald" valign="middle">@value.Feed.feed.Name</td>
+            <td class="centr_bald" valign="middle">@value.Feed.feed.Price</td>
+			<td class="centr_bald" valign="middle"><big>@value.Price</big></td>
+            <td class="centr_bald" valign="middle">@value.Count</td>
+    </tr>
+    }
+</table>
